@@ -48,20 +48,31 @@ class RotationMaster {
             this.Regexes.UseAbility = Regexes.ability({ source: this.Player.Name });
             this.Regexes.GainEffect = Regexes.gainsEffect({ target: this.Player.Name });
             this.Regexes.LoseEffect = Regexes.losesEffect({ target: this.Player.Name });
+
+            if (this.Player?.Job) {
+                switch (this.Player?.Job) {
+                    case 'WAR':
+                        this.core = new WarriorMaster();
+                        break;
+                    default:
+                        this.core = new WarriorMaster(); /* Debug */
+                        break;
+                }
+            }
         };
 
+        // Reset after changing the job
         if (this.Player?.Job != entityData.detail.job) {
-            // 重置
             this.Initialized = false;
             this.OnPlayerChanged(entityData);
             return;
         }
 
+        // Update job source
         if (this.Player?.Job) {
             switch (this.Player?.Job) {
-                case 'WAR': // 战士
+                case 'WAR':
                     this.Player.JobSource.Beast = <number><any>entityData.detail.jobDetail.beast;
-                    this.core = new WarriorMaster();
                     break;
                 default:
                     this.core = new WarriorMaster(); /* Debug */
@@ -109,7 +120,6 @@ addOverlayListener("onPlayerChangedEvent", function (e:any) {
 addOverlayListener("onLogEvent", function (e:any) {
     rotationMaster.OnLogEvent(e);
 });
-
 
 // addOverlayListener('onInCombatChangedEvent', function (e) {
 //     rotationMaster.OnInCombatChanged(e);
