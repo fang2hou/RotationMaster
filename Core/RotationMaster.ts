@@ -1,11 +1,11 @@
 declare var Regexes: any;
-declare var addOverlayListener: any;
 
-import { IFFXIVPlayer } from './Core/Interface/IFFXIVPlayer'
-import { IActionMaster } from './Core/Interface/IActionMaster'
-import { WarriorMaster } from './Jobs/Warrior'
 
-class RotationMaster {
+import { IFFXIVPlayer } from './Interface/IFFXIVPlayer'
+import { IActionMaster } from './Interface/IActionMaster'
+import { WarriorMaster } from '../Jobs/Warrior'
+
+export class RotationMaster {
     Player: IFFXIVPlayer | null;
     Initialized: boolean;
     Regexes: {
@@ -106,18 +106,11 @@ class RotationMaster {
             }
         }
     }
+
+    OnInCombatChanged(entityData: any) {
+        if (this.core) {
+            this.core.IsInCombat = entityData.detail.inGameCombat ? true : false;
+        }
+    }
 }
 
-let rotationMaster = new RotationMaster();
-
-addOverlayListener("onPlayerChangedEvent", function (e:any) {
-    rotationMaster.OnPlayerChanged(e);
-});
-
-addOverlayListener("onLogEvent", function (e:any) {
-    rotationMaster.OnLogEvent(e);
-});
-
-// addOverlayListener('onInCombatChangedEvent', function (e) {
-//     rotationMaster.OnInCombatChanged(e);
-// });

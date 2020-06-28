@@ -5,6 +5,7 @@ import { IFFXIVPlayer } from '../Core/Interface/IFFXIVPlayer'
 
 export class WarriorMaster implements IActionMaster {
     Actions: { [name: string]: FFXIVAction };
+    IsInCombat: boolean;
     ComboStage: number;
     ComboTime: number;
     HasInnerChaosBuff: boolean;
@@ -40,6 +41,7 @@ export class WarriorMaster implements IActionMaster {
         this.ComboStage = 0;
         this.ComboTime = Date.now();
         this.HasInnerChaosBuff = false;
+        this.IsInCombat = false;
     }
 
     UpdateStage(nextStep: number) {
