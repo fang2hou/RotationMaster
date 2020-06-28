@@ -48,15 +48,48 @@ export class WarriorMaster implements IActionMaster {
         if (nextStep !== 0) {
             this.ComboTime = Date.now();
         }
-
-        this.ComboStage = nextStep;
+        if (this.ComboStage + 1 == nextStep) {
+            this.ComboStage = nextStep;
+        } else {
+            this.ComboStage = 0;
+        }
     }
 
-    GetBuffRemain(timestamp?: number) {
+    GetStormEyeBuffRemain(timestamp?: number) {
         if (!timestamp) timestamp = Date.now();
         let endTime = this.Actions['StormEye'].LastUsedTime + 30 * 1000;
         let remain = endTime - timestamp;
         return remain < 0 ? 0 : remain / 1000;
+    }
+
+    GetNascentChaoBuffRemain(timestamp?: number) {
+        if (!timestamp) timestamp = Date.now();
+        let endTime = this.Actions['Infuriate'].LastUsedTime + 30.5 * 1000;
+        let remain = endTime - timestamp;
+        return remain < 0 ? 0 : remain / 1000;
+    }
+
+    GetInnerReleaseBuffRemain(timestamp?: number) {
+        if (!timestamp) timestamp = Date.now();
+        // 1 more second for weapon action stun
+        let endTime = this.Actions['InnerRelease'].LastUsedTime + 11 * 1000;
+        let remain = endTime - timestamp;
+        return remain < 0 ? 0 : remain / 1000;
+    }
+
+    CheckMyStatus() {
+        if (this.HasInnerChaosBuff) {
+            if (this.GetNascentChaoBuffRemain() == 0) {
+                this.HasInnerChaosBuff = false;
+            }
+        }
+
+        if (this.ComboStage != 0) {
+            if (Date.now() - this.ComboTime > 15 * 1000) {
+                this.ComboStage = 0;
+            }
+        }
+
     }
 
     DoAction(actionID: string) {
@@ -119,9 +152,13 @@ export class WarriorMaster implements IActionMaster {
             default:
                 break;
         }
+
+        this.CheckMyStatus();
     }
 
     Consider(playerInfo: IFFXIVPlayer) {
+        this.CheckMyStatus();
+
 
     }
 

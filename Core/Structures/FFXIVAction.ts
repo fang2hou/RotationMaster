@@ -34,22 +34,18 @@ export class FFXIVAction {
         }
     }
 
-    // 支持 3 种模式进行获取剩余时间
     GetRemainTime(time?: number, gcd?: number): number {
         this.StackUpdate();
 
         let remain: number;
 
         if (gcd) {
-            // gcd 数量模式
             let currentTime = Date.now();
             let gcdTime = currentTime + gcd * GLOBAL_COOL_DOWN * 1000;
             remain = this.CoolDown - (gcdTime - this.LastUsedTime);
         } else if (time) {
-            // 时间戳模式
             remain = this.CoolDown - (time - this.LastUsedTime);
         } else {
-            // 当前时间模式
             let currentTime = Date.now();
             remain = this.CoolDown - (currentTime - this.LastUsedTime);
         }
@@ -62,7 +58,7 @@ export class FFXIVAction {
 
         if (this.MaxStack != 1) {
             if (this.CurrentStack == this.MaxStack) {
-                // 满层数时使用是要开始计时的
+                // Only start calculate the cooldown after using action in max stack
                 this.LastUsedTime = Date.now();
             }
         } else {
