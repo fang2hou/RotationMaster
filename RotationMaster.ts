@@ -1,9 +1,6 @@
 declare var Regexes: any;
 declare var addOverlayListener: any;
 
-var GLOBAL_COOL_DOWN: number = 2.5;
-const ABILITY_STUN: number = 0.5;
-
 import { IFFXIVPlayer } from './Core/Interface/IFFXIVPlayer'
 import { IActionMaster } from './Core/Interface/IActionMaster'
 import { WarriorMaster } from './Jobs/Warrior'
