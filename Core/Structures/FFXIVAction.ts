@@ -1,0 +1,79 @@
+import { FFXIVActionType } from '../Enums/FFXIVActionType'
+declare var GLOBAL_COOL_DOWN: number;
+
+export class FFXIVAction {
+    ID: string;
+    Name: string;
+    CoolDown: number;
+    LastUsedTime: number;
+    Type: FFXIVActionType;
+    CurrentStack: number;
+    MaxStack: number;
+    IconURL: string | null;
+
+    constructor(id: string, name: string, cooldown: number, type: FFXIVActionType, maxStack?: number, url?: string) {
+        this.ID = id;
+        this.Name = name;
+        this.CoolDown = cooldown * 1000;
+        this.Type = type;
+        this.MaxStack = maxStack || 1;
+        this.CurrentStack = this.MaxStack;
+        this.IconURL = url || null;
+
+        this.LastUsedTime = 0;
+    }
+
+    StackUpdate() {
+        if (this.CurrentStack < this.MaxStack) {
+            let currentTime = Date.now();
+            let isCharged = currentTime - this.LastUsedTime > this.CoolDown;
+            if (isCharged) {
+                this.LastUsedTime += this.CoolDown;
+                this.CurrentStack++;
+            }
+        }
+    }
+
+    // 支持 3 种模式进行获取剩余时间
+    GetRemainTime(time?: number, gcd?: number): number {
+        this.StackUpdate();
+
+        let remain: number;
+
+        if (gcd) {
+            // gcd 数量模式
+            let currentTime = Date.now();
+            let gcdTime = currentTime + gcd * GLOBAL_COOL_DOWN * 1000;
+            remain = this.CoolDown - (gcdTime - this.LastUsedTime);
+        } else if (time) {
+            // 时间戳模式
+            remain = this.CoolDown - (time - this.LastUsedTime);
+        } else {
+            // 当前时间模式
+            let currentTime = Date.now();
+            remain = this.CoolDown - (currentTime - this.LastUsedTime);
+        }
+
+        return remain < 0 ? 0 : remain / 1000;
+    }
+
+    BeenUsed() {
+        this.StackUpdate();
+
+        if (this.MaxStack != 1) {
+            if (this.CurrentStack == this.MaxStack) {
+                // 满层数时使用是要开始计时的
+                this.LastUsedTime = Date.now();
+            }
+        } else {
+            this.LastUsedTime = Date.now();
+        }
+
+        this.CurrentStack = Math.max(0, this.CurrentStack - 1);
+    }
+
+    Reset() {
+        this.CurrentStack = this.MaxStack;
+        this.LastUsedTime = 0;
+    }
+}
