@@ -1,4 +1,5 @@
 declare var addOverlayListener: any;
+
 import { RotationMaster } from './Core/RotationMaster'
 
 let rotationMaster = new RotationMaster();

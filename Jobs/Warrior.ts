@@ -89,7 +89,6 @@ export class WarriorMaster implements IActionMaster {
                 this.ComboStage = 0;
             }
         }
-
     }
 
     DoAction(actionID: string) {

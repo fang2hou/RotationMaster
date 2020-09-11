@@ -66,6 +66,8 @@ export class FFXIVAction {
         }
 
         this.CurrentStack = Math.max(0, this.CurrentStack - 1);
+
+        console.log(this.Name+" been used.");
     }
 
     Reset() {
